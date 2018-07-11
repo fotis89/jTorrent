@@ -1,0 +1,69 @@
+﻿<controls:MetroWindow x:Name="Window" x:Class="jTorrent.Windows.AboutWindow"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                      Title="About jTorrent" Height="200" Width="300" FontSize="14" Background="White">
+	<Window.Resources>
+
+		<Storyboard x:Key="JellyClick">
+			<DoubleAnimationUsingKeyFrames
+				Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)"
+				Storyboard.TargetName="Label">
+				<EasingDoubleKeyFrame KeyTime="0" Value="0" />
+				<EasingDoubleKeyFrame x:Name="easingDoubleKeyFrame" KeyTime="0:0:0.5" Value="180" />
+				<EasingDoubleKeyFrame x:Name="easingDoubleKeyFrame1" KeyTime="0:0:1" Value="360" />
+			</DoubleAnimationUsingKeyFrames>
+			<DoubleAnimationUsingKeyFrames
+				Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+				Storyboard.TargetName="Label">
+				<EasingDoubleKeyFrame KeyTime="0" Value="1" />
+				<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="2.028" />
+				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="1" />
+			</DoubleAnimationUsingKeyFrames>
+			<DoubleAnimationUsingKeyFrames
+				Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+				Storyboard.TargetName="Label">
+				<EasingDoubleKeyFrame KeyTime="0" Value="1" />
+				<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1.786" />
+				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="1" />
+			</DoubleAnimationUsingKeyFrames>
+			<DoubleAnimationUsingKeyFrames
+				Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"
+				Storyboard.TargetName="Label">
+				<EasingDoubleKeyFrame KeyTime="0" Value="0" />
+				<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="2.06" />
+				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="0" />
+			</DoubleAnimationUsingKeyFrames>
+			<DoubleAnimationUsingKeyFrames
+				Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)"
+				Storyboard.TargetName="Label">
+				<EasingDoubleKeyFrame KeyTime="0" Value="0" />
+				<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="9.382" />
+				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="0" />
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+
+	</Window.Resources>
+	<Window.Triggers>
+		<EventTrigger RoutedEvent="UIElement.MouseLeftButtonDown" SourceName="Label">
+			<BeginStoryboard Storyboard="{StaticResource JellyClick}" />
+		</EventTrigger>
+	</Window.Triggers>
+
+	<Grid>
+		<Label x:Name="Label" Content="Jelly"
+		       HorizontalAlignment="Center" VerticalAlignment="Center"
+		       FontFamily="Edwardian Script ITC" FontSize="72" Foreground="#FFDD07FF"
+		       RenderTransformOrigin="0.5,0.5">
+			<Label.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform />
+					<SkewTransform />
+					<RotateTransform />
+					<TranslateTransform />
+				</TransformGroup>
+			</Label.RenderTransform>
+		</Label>
+	</Grid>
+</controls:MetroWindow>

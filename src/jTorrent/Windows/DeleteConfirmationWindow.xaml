@@ -1,0 +1,46 @@
+﻿<Controls:MetroWindow x:Class="jTorrent.Windows.DeleteConfirmationWindow"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                      xmlns:local="clr-namespace:jTorrent.Windows"
+                      mc:Ignorable="d"
+                      DataContext="{Binding RelativeSource={RelativeSource Self}}"
+                      Title="Delete Confirmation" Height="190" Width="380" WindowStyle="ToolWindow"
+                      WindowStartupLocation="CenterOwner">
+	<DockPanel Margin="15" LastChildFill="False">
+
+		<Grid DockPanel.Dock="Top">
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Image Grid.Row="0" Grid.Column="0" Height="50" Width="50" Margin="0,0,10,0" Source="/jTorrent;component/Resources/Images/icon.ico" />
+			<TextBlock Grid.Row="0" Grid.Column="1" Name="Message" TextWrapping="Wrap" Text="TextBlock" Height="50" />
+
+			<CheckBox Grid.Row="1" Grid.Column="1" Name="DeleteFilesCheckbox" Content="Also delete the files on the hard disk" HorizontalAlignment="Left"
+			          VerticalAlignment="Top" />
+		</Grid>
+		<Grid DockPanel.Dock="Bottom">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+
+			</Grid.ColumnDefinitions>
+
+			<Button Grid.Column="1" Content="Yes" Width="75"
+			        Click="YesButton_OnClick" />
+			<Button Grid.Column="2" Content="No" Width="75" Margin="10 0 0 0"
+			        Click="NoButton_OnClick" />
+		</Grid>
+
+
+	</DockPanel>
+</Controls:MetroWindow>
