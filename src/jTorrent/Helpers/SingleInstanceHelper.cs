@@ -38,40 +38,42 @@ namespace jTorrent.Helpers
 			_uniqueInstanceHost = new ServiceHost(new SingleInstanceService(torrentsSessionViewModel, window), new Uri(UriString));
 			_uniqueInstanceHost.Open();
 		}
-	}
 
-	[ServiceContract]
-	public interface ISingleInstanceService
-	{
-		[OperationContract(IsOneWay = true)]
-		void AddNewTorrentFile(string filePath);
+		#region Wcf Service
 
-		[OperationContract(IsOneWay = true)]
-		void FocusApplication();
-	}
-
-	[ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
-	public class SingleInstanceService : ISingleInstanceService
-	{
-		private readonly TorrentsSessionViewModel _torrentsSessionViewModel;
-		private readonly MainWindow _mainWindow;
-
-		public SingleInstanceService(TorrentsSessionViewModel torrentsSessionViewModel, MainWindow mainWindow)
+		[ServiceContract]
+		private interface ISingleInstanceService
 		{
-			_torrentsSessionViewModel = torrentsSessionViewModel;
-			_mainWindow = mainWindow;
+			[OperationContract(IsOneWay = true)]
+			void AddNewTorrentFile(string filePath);
+
+			[OperationContract(IsOneWay = true)]
+			void FocusApplication();
 		}
 
-		public void AddNewTorrentFile(string filePath)
+		[ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
+		private class SingleInstanceService : ISingleInstanceService
 		{
-			_torrentsSessionViewModel.AddNewTorrentFromFile(filePath);
+			private readonly TorrentsSessionViewModel _torrentsSessionViewModel;
+			private readonly MainWindow _mainWindow;
+
+			public SingleInstanceService(TorrentsSessionViewModel torrentsSessionViewModel, MainWindow mainWindow)
+			{
+				_torrentsSessionViewModel = torrentsSessionViewModel;
+				_mainWindow = mainWindow;
+			}
+
+			public void AddNewTorrentFile(string filePath)
+			{
+				_torrentsSessionViewModel.AddNewTorrentFromFile(filePath);
+			}
+
+			public void FocusApplication()
+			{
+				_mainWindow.BringToFrond();
+			}
 		}
 
-		public void FocusApplication()
-		{
-			if (_mainWindow.WindowState == WindowState.Minimized) _mainWindow.WindowState = WindowState.Normal;
-			_mainWindow.Activate();
-			_mainWindow.Focus();
-		}
+		#endregion
 	}
 }

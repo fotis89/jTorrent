@@ -15,6 +15,7 @@ namespace jTorrent
 	public partial class App : Application
 	{
 		private SingleInstanceHelper _singleHelper;
+		private SytemTrayIconHelper _notifyIconIconHelper;
 
 		private static string AppDataFolder => Path.Combine(AppDataFolderRaw, "jTorrent");
 		private static string AppDataFolderRaw => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -47,6 +48,8 @@ namespace jTorrent
 			var window = new MainWindow(mainWindowViewModel);
 			window.Show();
 
+			_notifyIconIconHelper = new SytemTrayIconHelper(window);
+
 			// TODO: Add a message broker
 			Current.Exit += (sender, args) =>
 			{
@@ -56,7 +59,7 @@ namespace jTorrent
 
 			if (e.Args.Any()) torrentsSessionViewModel.AddNewTorrentFromFile(e.Args[0]);
 
-			_singleHelper.HostNewProcessListener(torrentsSessionViewModel, window);
+			_singleHelper.StartNewProcessListener(torrentsSessionViewModel, window);
 		}
 	}
 }
