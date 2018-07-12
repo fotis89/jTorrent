@@ -33,7 +33,7 @@ namespace jTorrent.Helpers
 			if (args.Any()) host.AddNewTorrentFile(args[0]);
 		}
 
-		public void HostNewProcessListener(TorrentsSessionViewModel torrentsSessionViewModel, MainWindow window)
+		public void StartNewProcessListener(TorrentsSessionViewModel torrentsSessionViewModel, MainWindow window)
 		{
 			_uniqueInstanceHost = new ServiceHost(new SingleInstanceService(torrentsSessionViewModel, window), new Uri(UriString));
 			_uniqueInstanceHost.Open();
