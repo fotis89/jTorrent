@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace jTorrent.ViewModels
 {
-	public class TorrentViewModel : ViewModelBase
+	public class TorrentViewModel : BaseViewModel
 	{
 		public TorrentViewModel()
 		{
@@ -13,20 +13,24 @@ namespace jTorrent.ViewModels
 
 		public Guid Guid { get; set; }
 
-		public int Number { get; set; }
+		public int QueuePosition { get; set; }
 		public string Name { get; set; }
-
 		public long Size { get; set; }
+		public string DownloadLocation { get; set; }
+		public string TorrentFilePath { get; set; }
+
+		[JsonIgnore]
 		public long DownloadRate { get; set; }
+		[JsonIgnore]
 		public long UploadRate { get; set; }
+		[JsonIgnore]
 		public int Peers { get; set; }
+		[JsonIgnore]
 		public int Seeds { get; set; }
 
 		public bool Active { get; set; }
 		public float Progress { get; set; }
 
-		public string Folder { get; set; }
-		public string FilePath { get; set; }
 
 		[JsonIgnore]
 		public torrent_handle TorrentHandle { get; set; }
@@ -39,6 +43,7 @@ namespace jTorrent.ViewModels
 			DownloadRate = status.download_rate;
 			Peers = status.num_peers;
 			Seeds = status.num_seeds;
+			QueuePosition = TorrentHandle.queue_position();
 		}
 
 		public void Resume()

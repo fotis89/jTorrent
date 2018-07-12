@@ -22,7 +22,7 @@ namespace jTorrent.Windows
 
 		private void TorrentsDataGrid_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			var fileName = TorrentsDataGrid.SelectedItems.OfType<TorrentViewModel>().ToList().First().Folder;
+			var fileName = TorrentsDataGrid.SelectedItems.OfType<TorrentViewModel>().ToList().First().DownloadLocation;
 			if (Directory.Exists(fileName) || File.Exists(fileName))
 			{
 				Process.Start(fileName);

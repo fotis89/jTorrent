@@ -99,6 +99,7 @@
       <HintPath>..\packages\PropertyChanged.Fody.2.5.8\lib\net452\PropertyChanged.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -116,9 +117,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\SpeedToStringConverter.cs" />
-    <Compile Include="Helpers\MessageboxHelper.cs" />
-    <Compile Include="ViewModels\ViewModelBase.cs" />
-    <Compile Include="Helpers\FilePathHelper.cs" />
+    <Compile Include="Helpers\SingleInstanceHelper.cs" />
+    <Compile Include="Services\PersistenceService.cs" />
+    <Compile Include="Services\TorrentSessionService.cs" />
+    <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="Helpers\UserRequestsHelper.cs" />
     <Compile Include="ViewModels\TorrentViewModel.cs" />
     <Compile Include="Converters\SizeToStringConverter.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />

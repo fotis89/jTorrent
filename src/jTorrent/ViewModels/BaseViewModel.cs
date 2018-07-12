@@ -6,7 +6,7 @@ using PropertyChanged;
 namespace jTorrent.ViewModels
 {
 	[AddINotifyPropertyChangedInterface]
-	public abstract class ViewModelBase : INotifyPropertyChanged
+	public abstract class BaseViewModel : INotifyPropertyChanged
 	{
 		public virtual event PropertyChangedEventHandler PropertyChanged;
 

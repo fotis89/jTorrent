@@ -115,7 +115,7 @@
 			</DataGrid.InputBindings>
 
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40" />
+				<DataGridTextColumn Header="#" Binding="{Binding QueuePosition}" Width="40" />
 				<DataGridTextColumn Header="Active" Binding="{Binding Active}" Width="70" />
 				<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200" />
 				<DataGridTextColumn Header="Size" Binding="{Binding Size, Converter={StaticResource SizeToStringConverter}}" Width="60" />

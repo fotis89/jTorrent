@@ -1,29 +1,21 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
 using jTorrent.Commands;
 using jTorrent.Helpers;
-using ltnet;
-using Newtonsoft.Json;
+using jTorrent.Services;
 
 namespace jTorrent.ViewModels
 {
-	public class TorrentsSessionViewModel : ViewModelBase
+	public class TorrentsSessionViewModel : BaseViewModel
 	{
-		private readonly string _appDataFile;
-		private readonly session _session = new session();
-		private readonly string _downloadsFolder;
-		private readonly FilePathHelper _filePathHelper;
-		private readonly MessageboxHelper _messageboxHelper;
-		private static readonly object FileLocker = new object();
+		private readonly TorrentSessionService _torrentSessionService;
+		private readonly UserRequestsHelper _userRequestsHelper;
+		private readonly PersistenceService _persistenceService;
 
 		public DelegateCommand AddTorrentFromFile { get; set; }
 		public DelegateCommand DeleteTorrent { get; set; }
@@ -32,23 +24,30 @@ namespace jTorrent.ViewModels
 
 		public ObservableCollection<TorrentViewModel> Torrents { get; } = new ObservableCollection<TorrentViewModel>();
 
-		public TorrentsSessionViewModel(string appDataFile, string downloadsFolder, FilePathHelper filePathHelper, MessageboxHelper messageboxHelper)
+		public TorrentsSessionViewModel(UserRequestsHelper userRequestsHelper, PersistenceService persistenceService, TorrentSessionService torrentSessionService)
 		{
-			_appDataFile = appDataFile;
-			_downloadsFolder = downloadsFolder;
-			_filePathHelper = filePathHelper;
-			_messageboxHelper = messageboxHelper;
+			_userRequestsHelper = userRequestsHelper;
+			_persistenceService = persistenceService;
+			_torrentSessionService = torrentSessionService;
 
-			InitializeTorrentsCollection();
+			LoadTorrentInfos();
 
 			Torrents.CollectionChanged += Torrents_CollectionChanged;
-			AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
 			StartUpdateLoop();
 			CreateCommands();
 		}
 
-		#region Commands
+		private void LoadTorrentInfos()
+		{
+			foreach (var torrentViewModel in _persistenceService.LoadTorrentInfos())
+			{
+				torrentViewModel.TorrentHandle =_torrentSessionService.Add(torrentViewModel.TorrentFilePath, torrentViewModel.Active, out _);
+				AddToCollection(torrentViewModel);
+			}
+		}
+
+		#region Torrent Management Commands
 
 		private void CreateCommands()
 		{
@@ -62,7 +61,7 @@ namespace jTorrent.ViewModels
 		{
 			return new DelegateCommand(p =>
 			{
-				var filePath = _filePathHelper.GetTorrentFilePath();
+				var filePath = _userRequestsHelper.RequestTorrentFilePath();
 				if (filePath != null) AddNewTorrentFromFile(filePath);
 			});
 		}
@@ -90,6 +89,13 @@ namespace jTorrent.ViewModels
 				p => TorrentList(p).Any());
 		}
 
+		public void ResetCommands()
+		{
+			PauseDownload.OnCanExecuteChanged();
+			ResumeDownload.OnCanExecuteChanged();
+			DeleteTorrent.OnCanExecuteChanged();
+		}
+
 		private static List<TorrentViewModel> TorrentList(object p)
 		{
 			return (p as IEnumerable)?.Cast<TorrentViewModel>().ToList() ?? new List<TorrentViewModel>();
@@ -97,37 +103,56 @@ namespace jTorrent.ViewModels
 
 		#endregion
 
-		private void CurrentDomain_ProcessExit(object sender, EventArgs e)
+		#region Torrents Management
+
+		public void AddNewTorrentFromFile(string filepath)
 		{
-			SaveTorrentInfos();
-			_session.pause();
-			_session.Dispose();
-			SaveTorrentInfos();
+			var newPath = _persistenceService.PersistTorrentFile(filepath);
+			var torrentHandle = _torrentSessionService.Add(newPath, true, out var downloadLocation);
+			if (torrentHandle is null) return;
+
+			var torrentFile = torrentHandle.torrent_file();
+			var torrentViewModel = new TorrentViewModel
+			{
+				Name = torrentFile.name(),
+				Size = torrentFile.total_size(),
+				QueuePosition = torrentHandle.queue_position(),
+				TorrentFilePath = newPath,
+				TorrentHandle = torrentHandle,
+				DownloadLocation = downloadLocation,
+				Active = true
+			};
+
+			AddToCollection(torrentViewModel);
 		}
 
-		private void InitializeTorrentsCollection()
+		private void RemoveTorrents(IReadOnlyList<TorrentViewModel> torrents)
 		{
-			if (!File.Exists(_appDataFile)) return;
+			if (!torrents.Any()) return;
+			var (remove, deleteFiles) = _userRequestsHelper.RequestTorrentDeletionConfirmation(torrents);
+			if (!remove) return;
 
-			var appDate = File.ReadAllText(_appDataFile);
-			var torrentInfos = JsonConvert.DeserializeObject<List<TorrentViewModel>>(appDate);
-
-			foreach (var torrentInfo in torrentInfos)
+			foreach (var torrentViewModel in torrents)
 			{
-				torrentInfo.TorrentHandle = AddToSession(torrentInfo.FilePath);
-				torrentInfo.PropertyChanged += TorrentInfo_PropertyChanged;
-				Torrents.Add(torrentInfo);
-
-				if (torrentInfo.Active)
-				{
-					torrentInfo.Resume();
-				}
-				else
-				{
-					torrentInfo.Pause();
-				}
+				RemoveFromCollection(torrentViewModel);
+				_torrentSessionService.RemoveTorrentFromSession(torrentViewModel.TorrentHandle, deleteFiles);
+				_persistenceService.RemoveTorrentFile(torrentViewModel.TorrentFilePath);
 			}
 		}
+
+		private void AddToCollection(TorrentViewModel torrentViewModel)
+		{
+			Torrents.Add(torrentViewModel);
+			torrentViewModel.PropertyChanged += TorrentViewModel_PropertyChanged;
+		}
+
+		private void RemoveFromCollection(TorrentViewModel torrentViewModel)
+		{
+			Torrents.Remove(torrentViewModel);
+			torrentViewModel.PropertyChanged -= TorrentViewModel_PropertyChanged;
+		} 
+
+		#endregion
 
 		private void StartUpdateLoop()
 		{
@@ -141,15 +166,7 @@ namespace jTorrent.ViewModels
 			});
 		}
 
-		private torrent_handle AddToSession(string infoFilePath)
-		{
-			using (var addTorrentParams = new add_torrent_params { save_path = _downloadsFolder, ti = new torrent_info(infoFilePath) })
-			{
-				return _session.add_torrent(addTorrentParams);
-			}
-		}
-
-		private void TorrentInfo_PropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+		private void TorrentViewModel_PropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
 		{
 			if (propertyChangedEventArgs.PropertyName == nameof(TorrentViewModel.Active)) ResetCommands();
 		}
@@ -159,76 +176,9 @@ namespace jTorrent.ViewModels
 			ResetCommands();
 		}
 
-		public void ResetCommands()
+		public void OnAplicationExit()
 		{
-			PauseDownload.OnCanExecuteChanged();
-			ResumeDownload.OnCanExecuteChanged();
-			DeleteTorrent.OnCanExecuteChanged();
+			_persistenceService.SaveTorrentInfos(Torrents);
 		}
-
-		private void SaveTorrentInfos()
-		{
-			lock (FileLocker)
-			{
-				var appData = JsonConvert.SerializeObject(Torrents.ToList());
-				File.WriteAllText(_appDataFile, appData);
-			}
-		}
-
-		public void AddNewTorrentFromFile(string filepath)
-		{
-			try
-			{
-				// todo: copy torrent to appdata folder
-				var torrentHandle = AddToSession(filepath);
-				var torrentFile = torrentHandle.torrent_file();
-				var torrentInfo = new TorrentViewModel
-				{
-					Name = torrentFile.name(),
-					Size = torrentFile.total_size(),
-					Number = NextNumberForTorrent,
-					FilePath = filepath,
-					TorrentHandle = torrentHandle,
-					Folder = Path.Combine(_downloadsFolder, torrentFile.name()),
-					Active = true
-				};
-
-				torrentInfo.PropertyChanged += TorrentInfo_PropertyChanged;
-				torrentInfo.Resume();
-				Torrents.Add(torrentInfo);
-			}
-			catch
-			{
-				MessageBox.Show("Could not read torrent file.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			}
-		}
-
-		private void RemoveTorrents(List<TorrentViewModel> torrents)
-		{
-			if (!torrents.Any()) return;
-			var (remove, deleteFiles) = _messageboxHelper.ConfirmTorrentDeletion(torrents);
-			if (remove) torrents.ForEach(t => RemoveTorrent(t, deleteFiles));
-		}
-
-		private void RemoveTorrent(TorrentViewModel torrentViewModel, bool deleteFromDisk)
-		{
-			try
-			{
-				torrentViewModel.PropertyChanged -= TorrentInfo_PropertyChanged;
-				Torrents.Remove(torrentViewModel);
-				torrentViewModel.Pause();
-				_session.remove_torrent(torrentViewModel.TorrentHandle, deleteFromDisk ? 1 : 0);
-			}
-			catch (Exception)
-			{
-				//
-			}
-			finally
-			{
-				torrentViewModel.TorrentHandle.Dispose();
-			}
-		}
-
-		private int NextNumberForTorrent => Torrents.Any() ? Torrents.Max(t => t.Number) + 1 : 1;
 	}
 }
