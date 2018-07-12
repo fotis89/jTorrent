@@ -60,6 +60,21 @@ namespace jTorrent
 			if (e.Args.Any()) torrentsSessionViewModel.AddNewTorrentFromFile(e.Args[0]);
 
 			_singleHelper.StartNewProcessListener(torrentsSessionViewModel, window);
+
+			Current.DispatcherUnhandledException += Application_DispatcherUnhandledException;
+		}
+
+		private static void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+		{
+			switch (e.Exception)
+			{
+				case OperationException operationException:
+				{
+					MessageBox.Show(operationException.Reason, "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+					e.Handled = true;
+					break;
+				}
+			}
 		}
 	}
 }

@@ -119,6 +119,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\SpeedToStringConverter.cs" />
+    <Compile Include="OperationException.cs" />
     <Compile Include="Helpers\SingleInstanceHelper.cs" />
     <Compile Include="Services\PersistenceService.cs" />
     <Compile Include="Services\TorrentSessionService.cs" />

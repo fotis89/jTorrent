@@ -107,10 +107,10 @@ namespace jTorrent.ViewModels
 
 		public void AddNewTorrentFromFile(string filepath)
 		{
-			var newPath = _persistenceService.PersistTorrentFile(filepath);
-			var torrentHandle = _torrentSessionService.Add(newPath, true, out var downloadLocation);
+			var torrentHandle = _torrentSessionService.Add(filepath, true, out var downloadLocation);
 			if (torrentHandle is null) return;
 
+			var newPath = _persistenceService.PersistTorrentFile(filepath);
 			var torrentFile = torrentHandle.torrent_file();
 			var torrentViewModel = new TorrentViewModel
 			{

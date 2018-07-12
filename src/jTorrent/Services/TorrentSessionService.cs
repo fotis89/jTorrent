@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using ltnet;
 
@@ -36,6 +37,7 @@ namespace jTorrent.Services
 			{
 				var torrentHandle = AddFileToSession(filePath, out downloadLocation);
 				torrentHandle.auto_managed(false);
+
 				if (active)
 				{
 					torrentHandle.resume();
@@ -46,12 +48,11 @@ namespace jTorrent.Services
 				}
 				return torrentHandle;
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				MessageBox.Show("Could not read torrent file.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				if (ex is OperationException) throw;
+				throw new OperationException("Could not read torrent file.");
 			}
-
-			return null;
 		}
 
 		public void RemoveTorrentFromSession(torrent_handle torrentHandle, bool deleteFromDisk)
@@ -73,7 +74,13 @@ namespace jTorrent.Services
 
 		private torrent_handle AddFileToSession(string filePath, out string downloadLocation)
 		{
-			using (var addTorrentParams = new add_torrent_params { save_path = _downloadsFolder, ti = new torrent_info(filePath) })
+			downloadLocation = null;
+
+			var torrentInfo = new torrent_info(filePath);
+			var alreadyExists = _session.get_torrents().Any(t => t.torrent_file().name() == torrentInfo.name());
+			if (alreadyExists) throw new OperationException("Torrent already exists");
+
+			using (var addTorrentParams = new add_torrent_params { save_path = _downloadsFolder, ti = torrentInfo })
 			{
 				var torrentHandle = _session.add_torrent(addTorrentParams);
 				downloadLocation = Path.Combine(_downloadsFolder, torrentHandle.torrent_file().name());

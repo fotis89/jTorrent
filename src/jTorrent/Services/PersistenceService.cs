@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using jTorrent.ViewModels;
 using Newtonsoft.Json;
@@ -53,7 +54,7 @@ namespace jTorrent.Services
 
 		private string CreateNewFilePath(string filepath)
 		{
-			var fileName = Path.GetFileName(filepath);
+			var fileName = $"{Guid.NewGuid()}.torrent";
 			var newFilePath = Path.Combine(_torrentsFolder, fileName);
 			return newFilePath;
 		}
