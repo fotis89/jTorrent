@@ -4,6 +4,7 @@
                       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                       xmlns:converters="clr-namespace:jTorrent.Converters"
+                      xmlns:system="clr-namespace:System;assembly=mscorlib"
                       DataContext="{Binding RelativeSource={RelativeSource Self}, Path=MainWindowViewModel}"
                       Title="jTorrent" Height="450" Width="800" FontSize="14" Background="White">
 
@@ -19,7 +20,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
-		
+
 		<Menu Grid.Row="0" FontSize="14" Padding="0,2" Background="White" HorizontalContentAlignment="Stretch"
 		      VerticalContentAlignment="Top">
 			<MenuItem Header="File">
@@ -108,7 +109,7 @@
 		          IsManipulationEnabled="True" IsReadOnly="True" AllowDrop="True"
 		          MouseDoubleClick="TorrentsDataGrid_OnMouseDoubleClick" HorizontalContentAlignment="Stretch"
 		          VerticalContentAlignment="Stretch" SelectionChanged="TorrentsDataGrid_OnSelectionChanged">
-			
+
 			<DataGrid.InputBindings>
 				<KeyBinding Key="Delete"
 				            Command="{Binding TorrentsSessionViewModel.DeleteTorrent}"
@@ -120,7 +121,18 @@
 				<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="180" />
 				<DataGridTextColumn Header="Size" Binding="{Binding Size, Converter={StaticResource SizeToStringConverter}}" Width="60" />
 				<DataGridTextColumn Header="State" Binding="{Binding State, Converter={StaticResource SplitCamelCaseConverter}}" Width="100" />
-				<DataGridTextColumn Header="Progress" Binding="{Binding Progress}" Width="90" />
+				<DataGridTemplateColumn Header="Progress" Width="90">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Grid>
+								<ProgressBar Minimum="0" Maximum="100" Value="{Binding Progress}"></ProgressBar>
+								<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">
+									<Run Text="{Binding Progress}"></Run> %
+								</TextBlock>
+							</Grid>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
 				<DataGridTextColumn Header="Up" Binding="{Binding UploadRate, Converter={StaticResource SpeedToStringConverter}}" Width="70" />
 				<DataGridTextColumn Header="Down" Binding="{Binding DownloadRate, Converter={StaticResource SpeedToStringConverter}}" Width="70" />
 				<DataGridTextColumn Header="Seeds" Binding="{Binding Seeds}" Width="70" />
