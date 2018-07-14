@@ -19,12 +19,12 @@ namespace jTorrent.Services
 
 		public void OnApplicationExit()
 		{
-			var torrents = _session.get_torrents();
+			//var torrents = _session.get_torrents();
 
-			foreach (var torrentHandle in torrents)
-			{
-				if(torrentHandle.need_save_resume_data()) torrentHandle.save_resume_data(0);
-			}
+			//foreach (var torrentHandle in torrents)
+			//{
+			//	if(torrentHandle.need_save_resume_data()) torrentHandle.save_resume_data(0);
+			//}
 			_session.pause();
 			_session.Dispose();
 		}

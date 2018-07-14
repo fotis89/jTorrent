@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using AutoMapper;
+using jTorrent.Models;
 using jTorrent.ViewModels;
 using Newtonsoft.Json;
 
@@ -25,7 +28,8 @@ namespace jTorrent.Services
 
 		public void SaveTorrentInfos(IReadOnlyCollection<TorrentViewModel> torrents)
 		{
-			var appData = JsonConvert.SerializeObject(torrents);
+			var torrentsModel = torrents.Select(Mapper.Map<Torrent>).ToList();
+			var appData = JsonConvert.SerializeObject(torrentsModel);
 
 			lock (FileLocker)
 			{
@@ -40,7 +44,8 @@ namespace jTorrent.Services
 			{
 				if (!File.Exists(_appDataFile)) return torrentInfos;
 				var appDate = File.ReadAllText(_appDataFile);
-				torrentInfos = JsonConvert.DeserializeObject<List<TorrentViewModel>>(appDate);
+				var torrents = JsonConvert.DeserializeObject<List<TorrentViewModel>>(appDate);
+				torrentInfos = torrents.Select(Mapper.Map<TorrentViewModel>).ToList();
 			}
 			return torrentInfos;
 		}

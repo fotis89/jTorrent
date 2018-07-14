@@ -2,7 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Windows;
+using AutoMapper;
 using jTorrent.Helpers;
+using jTorrent.Models;
 using jTorrent.Services;
 using jTorrent.ViewModels;
 using jTorrent.Windows;
@@ -20,7 +22,7 @@ namespace jTorrent
 		private static string AppDataFolder => Path.Combine(AppDataFolderRaw, "jTorrent");
 		private static string AppDataFolderRaw => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 		private static string DownloadsFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
-		
+
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			_singleHelper = new SingleInstanceHelper();
@@ -38,6 +40,8 @@ namespace jTorrent
 
 		private void StartApplication(StartupEventArgs e)
 		{
+			SetupAutomapper();
+
 			// TODO: Add IOC Container / Service locator
 			var userRequestsHelper = new UserRequestsHelper();
 			var persistenceService = new PersistenceService(AppDataFolder);
@@ -64,16 +68,25 @@ namespace jTorrent
 			Current.DispatcherUnhandledException += Application_DispatcherUnhandledException;
 		}
 
+		private static void SetupAutomapper()
+		{
+			Mapper.Initialize(m =>
+			{
+				m.CreateMap<TorrentViewModel, Torrent>();
+				m.CreateMap<Torrent, TorrentViewModel>();
+			});
+		}
+
 		private static void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
 		{
 			switch (e.Exception)
 			{
 				case OperationException operationException:
-				{
-					MessageBox.Show(operationException.Reason, "Error", MessageBoxButton.OK, MessageBoxImage.Information);
-					e.Handled = true;
-					break;
-				}
+					{
+						MessageBox.Show(operationException.Reason, "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+						e.Handled = true;
+						break;
+					}
 			}
 		}
 	}

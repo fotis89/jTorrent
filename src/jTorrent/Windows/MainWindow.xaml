@@ -10,6 +10,7 @@
 	<Window.Resources>
 		<converters:SizeToStringConverter x:Key="SizeToStringConverter" />
 		<converters:SpeedToStringConverter x:Key="SpeedToStringConverter" />
+		<converters:SplitCamelCaseConverter x:Key="SplitCamelCaseConverter" />
 	</Window.Resources>
 
 	<Grid Margin="10 0 10 10">
@@ -116,9 +117,9 @@
 
 			<DataGrid.Columns>
 				<DataGridTextColumn Header="#" Binding="{Binding QueuePosition}" Width="40" />
-				<DataGridTextColumn Header="Active" Binding="{Binding Active}" Width="70" />
-				<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200" />
+				<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="180" />
 				<DataGridTextColumn Header="Size" Binding="{Binding Size, Converter={StaticResource SizeToStringConverter}}" Width="60" />
+				<DataGridTextColumn Header="State" Binding="{Binding State, Converter={StaticResource SplitCamelCaseConverter}}" Width="100" />
 				<DataGridTextColumn Header="Progress" Binding="{Binding Progress}" Width="90" />
 				<DataGridTextColumn Header="Up" Binding="{Binding UploadRate, Converter={StaticResource SpeedToStringConverter}}" Width="70" />
 				<DataGridTextColumn Header="Down" Binding="{Binding DownloadRate, Converter={StaticResource SpeedToStringConverter}}" Width="70" />
