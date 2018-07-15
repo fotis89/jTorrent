@@ -3,67 +3,63 @@
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-                      Title="About jTorrent" Height="200" Width="300" FontSize="14" Background="White">
-	<Window.Resources>
+					  ResizeMode="NoResize"  WindowStartupLocation="CenterOwner" 
+                      Title="About jTorrent" Height="350" Width="400" FontSize="14" Background="White"
+                      DataContext="{Binding RelativeSource={RelativeSource Self}}">
+	<Border Padding="20">
 
-		<Storyboard x:Key="JellyClick">
-			<DoubleAnimationUsingKeyFrames
-				Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)"
-				Storyboard.TargetName="Label">
-				<EasingDoubleKeyFrame KeyTime="0" Value="0" />
-				<EasingDoubleKeyFrame x:Name="easingDoubleKeyFrame" KeyTime="0:0:0.5" Value="180" />
-				<EasingDoubleKeyFrame x:Name="easingDoubleKeyFrame1" KeyTime="0:0:1" Value="360" />
-			</DoubleAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames
-				Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
-				Storyboard.TargetName="Label">
-				<EasingDoubleKeyFrame KeyTime="0" Value="1" />
-				<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="2.028" />
-				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="1" />
-			</DoubleAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames
-				Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
-				Storyboard.TargetName="Label">
-				<EasingDoubleKeyFrame KeyTime="0" Value="1" />
-				<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1.786" />
-				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="1" />
-			</DoubleAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames
-				Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"
-				Storyboard.TargetName="Label">
-				<EasingDoubleKeyFrame KeyTime="0" Value="0" />
-				<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="2.06" />
-				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="0" />
-			</DoubleAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames
-				Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)"
-				Storyboard.TargetName="Label">
-				<EasingDoubleKeyFrame KeyTime="0" Value="0" />
-				<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="9.382" />
-				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="0" />
-			</DoubleAnimationUsingKeyFrames>
-		</Storyboard>
+		<DockPanel VerticalAlignment="Top" HorizontalAlignment="Center">
 
-	</Window.Resources>
-	<Window.Triggers>
-		<EventTrigger RoutedEvent="UIElement.MouseLeftButtonDown" SourceName="Label">
-			<BeginStoryboard Storyboard="{StaticResource JellyClick}" />
-		</EventTrigger>
-	</Window.Triggers>
+			<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+				<Image Height="40" Width="40" Source="/jTorrent;component/Resources/Images/icon.ico"></Image>
+				<Label Margin="10 0 0 0" VerticalContentAlignment="Bottom">jTorrent v0.0.1</Label>
+			</StackPanel>
 
-	<Grid>
-		<Label x:Name="Label" Content="Jelly"
-		       HorizontalAlignment="Center" VerticalAlignment="Center"
-		       FontFamily="Edwardian Script ITC" FontSize="72" Foreground="#FFDD07FF"
-		       RenderTransformOrigin="0.5,0.5">
-			<Label.RenderTransform>
-				<TransformGroup>
-					<ScaleTransform />
-					<SkewTransform />
-					<RotateTransform />
-					<TranslateTransform />
-				</TransformGroup>
-			</Label.RenderTransform>
-		</Label>
-	</Grid>
+
+			<StackPanel DockPanel.Dock="Top"  Margin="0 10 0 0" Orientation="Horizontal">
+				<Label Content="Homepage: " Padding="0 5"/>
+				<TextBlock Margin="10 0" Foreground="#FF005DFF" FontStyle="Italic" VerticalAlignment="Center">
+					<Hyperlink NavigateUri="{Binding AppUrl}" Click="Hyperlink_Click">
+						<Run Text="{Binding AppUrl}"></Run>
+					</Hyperlink>
+				</TextBlock>
+			</StackPanel>
+
+			<GroupBox Margin="0 10 0 0" Header="MIT License" FontSize="10">
+				<GroupBox.Content>
+					<ScrollViewer>
+						<TextBlock TextWrapping="Wrap">
+					
+						Copyright (c) 2018 fotis89<LineBreak/>
+						<LineBreak/>
+						Permission is hereby granted, free of charge, to any person obtaining a copy
+						of this software and associated documentation files (the "Software"), to deal
+						in the Software without restriction, including without limitation the rights
+						to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+						copies of the Software, and to permit persons to whom the Software is
+						furnished to do so, subject to the following conditions:<LineBreak/>
+						<LineBreak/>
+						The above copyright notice and this permission notice shall be included in all
+						copies or substantial portions of the Software.<LineBreak/>
+						<LineBreak/>
+						THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+						IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+						FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+						AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+						LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+						OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+						SOFTWARE.
+						</TextBlock>
+					</ScrollViewer>
+
+				</GroupBox.Content>
+
+
+			</GroupBox>
+		</DockPanel>
+
+
+	</Border>
+
+
 </controls:MetroWindow>
