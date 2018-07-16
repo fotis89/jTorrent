@@ -54,7 +54,8 @@ namespace jTorrent.Services
 			using (var addTorrentParams = CreateAddTorrentParams(source))
 			{
 				var name = addTorrentParams.ti?.name() ?? addTorrentParams.name;
-				var alreadyExists = _session.get_torrents().Any(t => t.torrent_file().name() == name);
+				var infohash = addTorrentParams.ti?.info_hash() ?? addTorrentParams.info_hash();
+				var alreadyExists = _session.get_torrents().Any(t => t.info_hash() == infohash);
 				if (alreadyExists) throw new OperationException("Torrent already exists");
 
 				var torrentHandle = _session.add_torrent(addTorrentParams);

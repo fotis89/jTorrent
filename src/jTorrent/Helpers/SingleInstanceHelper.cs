@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using System.Windows;
 using jTorrent.ViewModels;
 using jTorrent.Windows;
 
@@ -64,7 +65,14 @@ namespace jTorrent.Helpers
 
 			public void AddNewTorrent(string filePath)
 			{
-				_transferListViewModel.AddNewTorrent(filePath);
+				try
+				{
+					_transferListViewModel.AddNewTorrent(filePath);
+				}
+				catch (OperationException e)
+				{
+					MessageBox.Show(e.Reason, "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+				}
 			}
 
 			public void FocusApplication()
