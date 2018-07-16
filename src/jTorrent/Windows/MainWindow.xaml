@@ -24,27 +24,27 @@
 		<Menu Grid.Row="0" FontSize="14" Padding="0,2" Background="White" HorizontalContentAlignment="Stretch"
 		      VerticalContentAlignment="Top">
 			<MenuItem Header="File">
-				<MenuItem Header="Add Torrent..." Command="{Binding TorrentsSessionViewModel.AddTorrentFromFile}" />
+				<MenuItem Header="Add Torrent..." Command="{Binding TransferListViewModel.AddTorrentFromFile}" />
 				<Separator />
 				<MenuItem Header="Exit" Command="{Binding ExitAppCommand}" />
 			</MenuItem>
 			<MenuItem Header="Edit">
 				<MenuItem Header="Start"
-				          Command="{Binding TorrentsSessionViewModel.ResumeDownload}"
+				          Command="{Binding TransferListViewModel.ResumeDownload}"
 				          CommandParameter="{Binding SelectedItems, ElementName=TorrentsDataGrid}">
 					<MenuItem.Icon>
 						<iconPacks:PackIconMaterial Kind="Play" VerticalAlignment="Center" HorizontalAlignment="Center" />
 					</MenuItem.Icon>
 				</MenuItem>
 				<MenuItem Header="Pause"
-				          Command="{Binding TorrentsSessionViewModel.PauseDownload}"
+				          Command="{Binding TransferListViewModel.PauseDownload}"
 				          CommandParameter="{Binding SelectedItems, ElementName=TorrentsDataGrid}">
 					<MenuItem.Icon>
 						<iconPacks:PackIconMaterial Kind="Pause" VerticalAlignment="Center" HorizontalAlignment="Center" />
 					</MenuItem.Icon>
 				</MenuItem>
 				<MenuItem Header="Delete" InputGestureText="Del"
-				          Command="{Binding TorrentsSessionViewModel.DeleteTorrent}"
+				          Command="{Binding TransferListViewModel.DeleteTorrent}"
 				          CommandParameter="{Binding SelectedItems, ElementName=TorrentsDataGrid}">
 					<MenuItem.Icon>
 						<iconPacks:PackIconMaterial Kind="Delete" VerticalAlignment="Center" HorizontalAlignment="Center" />
@@ -67,22 +67,22 @@
 				<DropShadowEffect Opacity="0.5" RenderingBias="Quality" Direction="270" BlurRadius="5" ShadowDepth="5" Color="#CC0C0808"/>
 			</ToolBarTray.Effect>
 			<ToolBar ToolBarTray.IsLocked="true" OverflowMode="Never" Height="36" Margin="10,0,10,0">
-				<Button Command="{Binding TorrentsSessionViewModel.AddTorrentFromFile}">
+				<Button Command="{Binding TransferListViewModel.AddTorrentFromFile}">
 					<iconPacks:PackIconMaterial Kind="FileImport" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0" />
 				</Button>
 				<Button>
 					<iconPacks:PackIconMaterial Kind="MagnetOn" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0" />
 				</Button>
-				<Button Command="{Binding TorrentsSessionViewModel.DeleteTorrent}"
+				<Button Command="{Binding TransferListViewModel.DeleteTorrent}"
 				        CommandParameter="{Binding SelectedItems, ElementName=TorrentsDataGrid}">
 					<iconPacks:PackIconMaterial Kind="Delete" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0" />
 				</Button>
 				<Separator />
-				<Button Command="{Binding TorrentsSessionViewModel.ResumeDownload}"
+				<Button Command="{Binding TransferListViewModel.ResumeDownload}"
 				        CommandParameter="{Binding SelectedItems, ElementName=TorrentsDataGrid}">
 					<iconPacks:PackIconMaterial Kind="Play" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0" />
 				</Button>
-				<Button Command="{Binding TorrentsSessionViewModel.PauseDownload}"
+				<Button Command="{Binding TransferListViewModel.PauseDownload}"
 				        CommandParameter="{Binding SelectedItems, ElementName=TorrentsDataGrid}">
 					<iconPacks:PackIconMaterial Kind="Pause" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0" />
 				</Button>
@@ -105,7 +105,7 @@
 		</ToolBarTray>
 
 		<DataGrid Margin="0 15 0 0" Grid.Row="2" x:Name="TorrentsDataGrid" VerticalAlignment="Stretch" HorizontalAlignment="Left"
-		          ItemsSource="{Binding TorrentsSessionViewModel.Torrents}"
+		          ItemsSource="{Binding TransferListViewModel.Torrents}"
 		          AutoGenerateColumns="False"  Width="Auto"
 		          GridLinesVisibility="Vertical" HorizontalGridLinesBrush="#FFE4E4E4" VerticalGridLinesBrush="#FFE4E4E4"
 		          Background="{x:Null}" CanUserResizeRows="False"
@@ -115,7 +115,7 @@
 
 			<DataGrid.InputBindings>
 				<KeyBinding Key="Delete"
-				            Command="{Binding TorrentsSessionViewModel.DeleteTorrent}"
+				            Command="{Binding TransferListViewModel.DeleteTorrent}"
 				            CommandParameter="{Binding SelectedItems, ElementName=TorrentsDataGrid}" />
 			</DataGrid.InputBindings>
 

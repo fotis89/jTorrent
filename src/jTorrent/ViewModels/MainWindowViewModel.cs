@@ -10,11 +10,11 @@ namespace jTorrent.ViewModels
 		public ICommand ExitAppCommand { get; set; } = new DelegateCommand(p => Application.Current.Shutdown());
 		public ICommand AboutWindowCommand { get; set; } = new DelegateCommand(p => new AboutWindow().ShowDialog());
 
-		public TorrentsSessionViewModel TorrentsSessionViewModel { get; }
+		public TransferListViewModel TransferListViewModel { get; }
 
-		public MainWindowViewModel(TorrentsSessionViewModel torrentsSessionViewModel)
+		public MainWindowViewModel(TransferListViewModel transferListViewModel)
 		{
-			TorrentsSessionViewModel = torrentsSessionViewModel;
+			TransferListViewModel = transferListViewModel;
 		}
 	}
 }

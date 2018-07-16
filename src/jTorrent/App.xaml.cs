@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.AccessControl;
-using System.Threading;
 using System.Windows;
 using AutoMapper;
 using jTorrent.Helpers;
@@ -36,8 +33,8 @@ namespace jTorrent
 
 			if (_singleHelper.IsNewInstance)
 			{
-				SetupMagnetLinkHandler();
 				Current.DispatcherUnhandledException += Application_DispatcherUnhandledException;
+				SetupMagnetLinkHandler();
 				StartApplication(e);
 			}
 			else
@@ -55,7 +52,7 @@ namespace jTorrent
 			var userRequestsHelper = new UserRequestsHelper();
 			var persistenceService = new PersistenceService(AppDataFolder);
 			var torrentSessionService = new TorrentSessionService(DownloadsFolder);
-			var torrentsSessionViewModel = new TorrentsSessionViewModel(userRequestsHelper, persistenceService, torrentSessionService);
+			var torrentsSessionViewModel = new TransferListViewModel(userRequestsHelper, persistenceService, torrentSessionService);
 			var mainWindowViewModel = new MainWindowViewModel(torrentsSessionViewModel);
 
 			var window = new MainWindow(mainWindowViewModel);
@@ -75,15 +72,6 @@ namespace jTorrent
 			_singleHelper.StartNewProcessListener(torrentsSessionViewModel, window);
 		}
 
-		private static void SetupAutomapper()
-		{
-			Mapper.Initialize(m =>
-			{
-				m.CreateMap<TorrentViewModel, Torrent>();
-				m.CreateMap<Torrent, TorrentViewModel>();
-			});
-		}
-
 		private static void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
 		{
 			switch (e.Exception)
@@ -97,20 +85,28 @@ namespace jTorrent
 			}
 		}
 
+		private static void SetupAutomapper()
+		{
+			Mapper.Initialize(m =>
+			{
+				m.CreateMap<TorrentViewModel, Torrent>();
+				m.CreateMap<Torrent, TorrentViewModel>();
+			});
+		}
+
 		private void SetupMagnetLinkHandler()
 		{
-			var magnetKey = Registry.CurrentUser.OpenSubKey(@"Software\Classes\magnet", true) ?? Registry.CurrentUser.CreateSubKey(@"Software\Classes\magnet");
+			var magnetKey = Registry.CurrentUser.CreateSubKey(@"Software\Classes\magnet");
 			magnetKey.SetValue("", "URL:Magnet link");
 			magnetKey.SetValue("Content Type", "application/x-magnet");
 			magnetKey.SetValue("URL Protocol", "");
 
 			var path = Assembly.GetExecutingAssembly().Location;
-			var defaultIcon = magnetKey.OpenSubKey("DefaultIcon", true) ?? magnetKey.CreateSubKey("DefaultIcon");
+			var defaultIcon = magnetKey.CreateSubKey("DefaultIcon");
 			defaultIcon.SetValue("", $"\"{path}\",1");
 
-			var command = magnetKey.OpenSubKey(@"shell\open\command", true) ?? magnetKey.CreateSubKey(@"shell\open\command");
+			var command = magnetKey.CreateSubKey(@"shell\open\command");
 			command.SetValue("", $"\"{path}\" \"%1\"");
 		}
-
 	}
 }

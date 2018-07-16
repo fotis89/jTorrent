@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace jTorrent.Models
 {
 	public class Torrent

@@ -32,9 +32,9 @@ namespace jTorrent.Helpers
 			if (args.Any()) host.AddNewTorrent(args[0]);
 		}
 
-		public void StartNewProcessListener(TorrentsSessionViewModel torrentsSessionViewModel, MainWindow window)
+		public void StartNewProcessListener(TransferListViewModel transferListViewModel, MainWindow window)
 		{
-			_uniqueInstanceHost = new ServiceHost(new SingleInstanceService(torrentsSessionViewModel, window), new Uri(UriString));
+			_uniqueInstanceHost = new ServiceHost(new SingleInstanceService(transferListViewModel, window), new Uri(UriString));
 			_uniqueInstanceHost.Open();
 		}
 
@@ -53,18 +53,18 @@ namespace jTorrent.Helpers
 		[ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single)]
 		private class SingleInstanceService : ISingleInstanceService
 		{
-			private readonly TorrentsSessionViewModel _torrentsSessionViewModel;
+			private readonly TransferListViewModel _transferListViewModel;
 			private readonly MainWindow _mainWindow;
 
-			public SingleInstanceService(TorrentsSessionViewModel torrentsSessionViewModel, MainWindow mainWindow)
+			public SingleInstanceService(TransferListViewModel transferListViewModel, MainWindow mainWindow)
 			{
-				_torrentsSessionViewModel = torrentsSessionViewModel;
+				_transferListViewModel = transferListViewModel;
 				_mainWindow = mainWindow;
 			}
 
 			public void AddNewTorrent(string filePath)
 			{
-				_torrentsSessionViewModel.AddNewTorrent(filePath);
+				_transferListViewModel.AddNewTorrent(filePath);
 			}
 
 			public void FocusApplication()

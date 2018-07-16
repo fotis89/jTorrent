@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using jTorrent.Commands;
 using jTorrent.Helpers;
 using jTorrent.Services;
-using ltnet;
 
 namespace jTorrent.ViewModels
 {
-	public class TorrentsSessionViewModel : BaseViewModel
+	public class TransferListViewModel : BaseViewModel
 	{
 		private readonly TorrentSessionService _torrentSessionService;
 		private readonly UserRequestsHelper _userRequestsHelper;
@@ -26,7 +24,7 @@ namespace jTorrent.ViewModels
 
 		public ObservableCollection<TorrentViewModel> Torrents { get; } = new ObservableCollection<TorrentViewModel>();
 
-		public TorrentsSessionViewModel(UserRequestsHelper userRequestsHelper, PersistenceService persistenceService, TorrentSessionService torrentSessionService)
+		public TransferListViewModel(UserRequestsHelper userRequestsHelper, PersistenceService persistenceService, TorrentSessionService torrentSessionService)
 		{
 			_userRequestsHelper = userRequestsHelper;
 			_persistenceService = persistenceService;

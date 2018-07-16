@@ -36,7 +36,7 @@ namespace jTorrent.Windows
 
 		private void TorrentsDataGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			MainWindowViewModel.TorrentsSessionViewModel.ResetCommands();
+			MainWindowViewModel.TransferListViewModel.ResetCommands();
 		}
 
 		public void BringToFrond()

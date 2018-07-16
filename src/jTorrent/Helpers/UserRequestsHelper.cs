@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
 using jTorrent.ViewModels;
 using jTorrent.Windows;
 using Microsoft.Win32;
