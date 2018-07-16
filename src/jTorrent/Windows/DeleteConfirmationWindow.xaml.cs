@@ -11,9 +11,9 @@ namespace jTorrent.Windows
 	{
 		public bool DeleteFiles { get; set; }
 
-		public DeleteConfirmationWindow(Window ownerWindow, IReadOnlyList<TorrentViewModel> selectedTorrents)
+		public DeleteConfirmationWindow(IReadOnlyList<TorrentViewModel> selectedTorrents)
 		{
-			Owner = ownerWindow;
+			Owner = Application.Current.MainWindow;
 			InitializeComponent();
 
 			var selectedTorrentsCount = selectedTorrents.Count;

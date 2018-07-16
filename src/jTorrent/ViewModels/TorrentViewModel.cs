@@ -10,7 +10,7 @@ namespace jTorrent.ViewModels
 		public string Name { get; set; }
 		public long Size { get; set; }
 		public string DownloadLocation { get; set; }
-		public string TorrentFilePath { get; set; }
+		public string TorrentSource { get; set; }
 		public long DownloadRate { get; set; }
 		public long UploadRate { get; set; }
 		public int Peers { get; set; }
@@ -29,6 +29,12 @@ namespace jTorrent.ViewModels
 			Peers = status.num_peers;
 			Seeds = status.num_seeds;
 			State = (TorrentState)(Active ? status.state : 0);
+
+			var ti = TorrentHandle.torrent_file();
+			if (ti != null)
+			{
+				Size = ti.total_size();
+			}
 		}
 
 		public void Resume()

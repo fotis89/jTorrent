@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using jTorrent.Commands;
 using jTorrent.Helpers;
 using jTorrent.Services;
+using ltnet;
 
 namespace jTorrent.ViewModels
 {
@@ -42,7 +44,7 @@ namespace jTorrent.ViewModels
 		{
 			foreach (var torrentViewModel in _persistenceService.LoadTorrentInfos())
 			{
-				torrentViewModel.TorrentHandle =_torrentSessionService.Add(torrentViewModel.TorrentFilePath, torrentViewModel.Active, out _);
+				torrentViewModel.TorrentHandle = _torrentSessionService.AddTorrent(torrentViewModel.TorrentSource, torrentViewModel.Active).torrentHandle;
 				AddToCollection(torrentViewModel);
 			}
 		}
@@ -62,7 +64,7 @@ namespace jTorrent.ViewModels
 			return new DelegateCommand(p =>
 			{
 				var filePath = _userRequestsHelper.RequestTorrentFilePath();
-				if (filePath != null) AddNewTorrentFromFile(filePath);
+				if (filePath != null) AddNewTorrent(filePath);
 			});
 		}
 
@@ -105,19 +107,16 @@ namespace jTorrent.ViewModels
 
 		#region Torrents Management
 
-		public void AddNewTorrentFromFile(string filepath)
+		public void AddNewTorrent(string source)
 		{
-			var torrentHandle = _torrentSessionService.Add(filepath, true, out var downloadLocation);
-			if (torrentHandle is null) return;
-
-			var newPath = _persistenceService.PersistTorrentFile(filepath);
-			var torrentFile = torrentHandle.torrent_file();
+			var (torrentHandle, downloadLocation, name) = _torrentSessionService.AddTorrent(source, true);
+			var torrentSource = source.StartsWith("magnet") ? source : _persistenceService.PersistTorrentFile(source);
 			var torrentViewModel = new TorrentViewModel
 			{
-				Name = torrentFile.name(),
-				Size = torrentFile.total_size(),
+				Name = name,
+				Size = torrentHandle.torrent_file()?.total_size() ?? 0,
 				QueuePosition = torrentHandle.queue_position(),
-				TorrentFilePath = newPath,
+				TorrentSource = torrentSource,
 				TorrentHandle = torrentHandle,
 				DownloadLocation = downloadLocation,
 				Active = true
@@ -135,8 +134,8 @@ namespace jTorrent.ViewModels
 			foreach (var torrentViewModel in torrents)
 			{
 				RemoveFromCollection(torrentViewModel);
-				_torrentSessionService.RemoveTorrentFromSession(torrentViewModel.TorrentHandle, deleteFiles);
-				_persistenceService.RemoveTorrentFile(torrentViewModel.TorrentFilePath);
+				_torrentSessionService.RemoveTorrent(torrentViewModel.TorrentHandle, deleteFiles);
+				_persistenceService.RemoveTorrentFile(torrentViewModel.TorrentSource);
 			}
 		}
 

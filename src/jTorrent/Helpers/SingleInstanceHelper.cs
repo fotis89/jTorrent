@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
-using System.Windows;
 using jTorrent.ViewModels;
 using jTorrent.Windows;
 
@@ -30,7 +29,7 @@ namespace jTorrent.Helpers
 		{
 			var host = new ChannelFactory<ISingleInstanceService>(new NetNamedPipeBinding(), new EndpointAddress(UriString)).CreateChannel();
 			host.FocusApplication();
-			if (args.Any()) host.AddNewTorrentFile(args[0]);
+			if (args.Any()) host.AddNewTorrent(args[0]);
 		}
 
 		public void StartNewProcessListener(TorrentsSessionViewModel torrentsSessionViewModel, MainWindow window)
@@ -45,7 +44,7 @@ namespace jTorrent.Helpers
 		private interface ISingleInstanceService
 		{
 			[OperationContract(IsOneWay = true)]
-			void AddNewTorrentFile(string filePath);
+			void AddNewTorrent(string filePath);
 
 			[OperationContract(IsOneWay = true)]
 			void FocusApplication();
@@ -63,9 +62,9 @@ namespace jTorrent.Helpers
 				_mainWindow = mainWindow;
 			}
 
-			public void AddNewTorrentFile(string filePath)
+			public void AddNewTorrent(string filePath)
 			{
-				_torrentsSessionViewModel.AddNewTorrentFromFile(filePath);
+				_torrentsSessionViewModel.AddNewTorrent(filePath);
 			}
 
 			public void FocusApplication()

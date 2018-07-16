@@ -6,7 +6,7 @@
                       xmlns:converters="clr-namespace:jTorrent.Converters"
                       xmlns:system="clr-namespace:System;assembly=mscorlib"
                       DataContext="{Binding RelativeSource={RelativeSource Self}, Path=MainWindowViewModel}"
-                      Title="jTorrent" Height="450" Width="800" FontSize="14" Background="White">
+                      Title="jTorrent" MinHeight="450" Height="450" MinWidth="800" Width="800" FontSize="14" Background="White">
 
 	<Window.Resources>
 		<converters:SizeToStringConverter x:Key="SizeToStringConverter" />
@@ -62,8 +62,11 @@
 			</MenuItem>
 		</Menu>
 
-		<ToolBarTray Grid.Row="1" DockPanel.Dock="Top" Background="White">
-			<ToolBar ToolBarTray.IsLocked="true" OverflowMode="Never" Height="36">
+		<ToolBarTray Grid.Row="1" DockPanel.Dock="Top" Background="White" Margin="-10,0,-10,0">
+			<ToolBarTray.Effect>
+				<DropShadowEffect Opacity="0.5" RenderingBias="Quality" Direction="270" BlurRadius="5" ShadowDepth="5" Color="#CC0C0808"/>
+			</ToolBarTray.Effect>
+			<ToolBar ToolBarTray.IsLocked="true" OverflowMode="Never" Height="36" Margin="10,0,10,0">
 				<Button Command="{Binding TorrentsSessionViewModel.AddTorrentFromFile}">
 					<iconPacks:PackIconMaterial Kind="FileImport" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0" />
 				</Button>
@@ -101,14 +104,14 @@
 			</ToolBar>
 		</ToolBarTray>
 
-		<DataGrid Grid.Row="2" x:Name="TorrentsDataGrid" VerticalAlignment="Stretch"
+		<DataGrid Margin="0 15 0 0" Grid.Row="2" x:Name="TorrentsDataGrid" VerticalAlignment="Stretch" HorizontalAlignment="Left"
 		          ItemsSource="{Binding TorrentsSessionViewModel.Torrents}"
-		          AutoGenerateColumns="False" 
+		          AutoGenerateColumns="False"  Width="Auto"
 		          GridLinesVisibility="Vertical" HorizontalGridLinesBrush="#FFE4E4E4" VerticalGridLinesBrush="#FFE4E4E4"
 		          Background="{x:Null}" CanUserResizeRows="False"
 		          IsManipulationEnabled="True" IsReadOnly="True" AllowDrop="True"
-		          MouseDoubleClick="TorrentsDataGrid_OnMouseDoubleClick" HorizontalContentAlignment="Stretch"
-		          VerticalContentAlignment="Stretch" SelectionChanged="TorrentsDataGrid_OnSelectionChanged">
+		          MouseDoubleClick="TorrentsDataGrid_OnMouseDoubleClick"
+		          SelectionChanged="TorrentsDataGrid_OnSelectionChanged" Padding="0">
 
 			<DataGrid.InputBindings>
 				<KeyBinding Key="Delete"
@@ -118,13 +121,13 @@
 
 			<DataGrid.Columns>
 				<DataGridTextColumn Header="#" Binding="{Binding QueuePosition}" Width="40" />
-				<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="180" />
+				<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200" />
 				<DataGridTextColumn Header="Size" Binding="{Binding Size, Converter={StaticResource SizeToStringConverter}}" Width="60" />
 				<DataGridTextColumn Header="State" Binding="{Binding State, Converter={StaticResource SplitCamelCaseConverter}}" Width="100" />
 				<DataGridTemplateColumn Header="Progress" Width="90">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<Grid>
+							<Grid Width="100">
 								<ProgressBar Minimum="0" Maximum="100" Value="{Binding Progress}"></ProgressBar>
 								<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">
 									<Run Text="{Binding Progress}"></Run> %

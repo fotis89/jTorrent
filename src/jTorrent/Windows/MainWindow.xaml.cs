@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -24,6 +25,8 @@ namespace jTorrent.Windows
 
 		private void TorrentsDataGrid_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
+			if(TorrentsDataGrid.SelectedItems.Count <= 0) return;
+
 			var fileName = TorrentsDataGrid.SelectedItems.OfType<TorrentViewModel>().ToList().First().DownloadLocation;
 			if (Directory.Exists(fileName) || File.Exists(fileName))
 			{

@@ -28,8 +28,7 @@ namespace jTorrent.Helpers
 
 		public (bool remove, bool deleteFiles) RequestTorrentDeletionConfirmation(IReadOnlyList<TorrentViewModel> torrents)
 		{
-			var mainWindow = Application.Current.Windows.OfType<MainWindow>().First();
-			var window = new DeleteConfirmationWindow(mainWindow, torrents);
+			var window = new DeleteConfirmationWindow(torrents);
 
 			var remove = window.ShowDialog() ?? false;
 			return (remove, window.DeleteFiles);

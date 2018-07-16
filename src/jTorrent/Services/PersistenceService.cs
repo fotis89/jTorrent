@@ -52,20 +52,14 @@ namespace jTorrent.Services
 
 		public string PersistTorrentFile(string filepath)
 		{
-			var newFilePath = CreateNewFilePath(filepath);
+			var newFilePath = Path.Combine(_torrentsFolder, $"{Guid.NewGuid()}.torrent");
 			File.Copy(filepath, newFilePath);
-			return newFilePath;
-		}
-
-		private string CreateNewFilePath(string filepath)
-		{
-			var fileName = $"{Guid.NewGuid()}.torrent";
-			var newFilePath = Path.Combine(_torrentsFolder, fileName);
 			return newFilePath;
 		}
 
 		public void RemoveTorrentFile(string torrentFilePath)
 		{
+			if (string.IsNullOrWhiteSpace(torrentFilePath) || !File.Exists(torrentFilePath)) return;
 			File.Delete(torrentFilePath);
 		}
 	}

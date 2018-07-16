@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Security.AccessControl;
+using System.Threading;
 using System.Windows;
 using AutoMapper;
 using jTorrent.Helpers;
@@ -8,6 +12,7 @@ using jTorrent.Models;
 using jTorrent.Services;
 using jTorrent.ViewModels;
 using jTorrent.Windows;
+using Microsoft.Win32;
 
 namespace jTorrent
 {
@@ -25,10 +30,14 @@ namespace jTorrent
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
+			// while (!Debugger.IsAttached) Thread.Sleep(100);
+
 			_singleHelper = new SingleInstanceHelper();
 
 			if (_singleHelper.IsNewInstance)
 			{
+				SetupMagnetLinkHandler();
+				Current.DispatcherUnhandledException += Application_DispatcherUnhandledException;
 				StartApplication(e);
 			}
 			else
@@ -61,11 +70,9 @@ namespace jTorrent
 				torrentSessionService.OnApplicationExit();
 			};
 
-			if (e.Args.Any()) torrentsSessionViewModel.AddNewTorrentFromFile(e.Args[0]);
+			if (e.Args.Any()) torrentsSessionViewModel.AddNewTorrent(e.Args[0]);
 
 			_singleHelper.StartNewProcessListener(torrentsSessionViewModel, window);
-
-			Current.DispatcherUnhandledException += Application_DispatcherUnhandledException;
 		}
 
 		private static void SetupAutomapper()
@@ -89,5 +96,21 @@ namespace jTorrent
 					}
 			}
 		}
+
+		private void SetupMagnetLinkHandler()
+		{
+			var magnetKey = Registry.CurrentUser.OpenSubKey(@"Software\Classes\magnet", true) ?? Registry.CurrentUser.CreateSubKey(@"Software\Classes\magnet");
+			magnetKey.SetValue("", "URL:Magnet link");
+			magnetKey.SetValue("Content Type", "application/x-magnet");
+			magnetKey.SetValue("URL Protocol", "");
+
+			var path = Assembly.GetExecutingAssembly().Location;
+			var defaultIcon = magnetKey.OpenSubKey("DefaultIcon", true) ?? magnetKey.CreateSubKey("DefaultIcon");
+			defaultIcon.SetValue("", $"\"{path}\",1");
+
+			var command = magnetKey.OpenSubKey(@"shell\open\command", true) ?? magnetKey.CreateSubKey(@"shell\open\command");
+			command.SetValue("", $"\"{path}\" \"%1\"");
+		}
+
 	}
 }
