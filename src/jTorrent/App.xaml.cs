@@ -29,7 +29,9 @@ namespace jTorrent
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
-			while (!Debugger.IsAttached) Thread.Sleep(100);
+#if DEBUG
+			//while (!Debugger.IsAttached) Thread.Sleep(100);
+#endif
 
 			_singleHelper = new SingleInstanceHelper();
 
